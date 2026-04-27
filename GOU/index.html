@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GOU Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@700&display=swap');
+
+        body {
+            font-family: 'Tajawal', 'Comic Sans MS', sans-serif;
+            background-color: #a0d8ef; /* لون أزرق طفولي */
+            background-image: radial-gradient(#ffffff 15%, transparent 16%), radial-gradient(#ffffff 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* شاشة البداية */
+        #start-screen {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 60px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+            border: 5px dashed #ff8da1;
+        }
+
+        #start-screen h1 {
+            color: #ff4d6d;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.8rem;
+            font-family: inherit;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background: #ff2a55;
+        }
+
+        /* شاشة اللعب */
+        #game-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 15px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn.active {
+            transform: scale(1.2);
+            border-color: #333;
+        }
+
+        #clear-btn {
+            background: #ffb703;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 90%;
+            max-width: 400px; /* حجم مناسب لصورة باتريك */
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+            border: 5px solid #fff;
+        }
+
+        #patrick-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            pointer-events: none; /* لمنع سحب الصورة */
+            user-select: none;
+        }
+
+        #makeup-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            touch-action: none; /* مهم جداً لمنع الشاشة من التحرك أثناء التلوين باللمس */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <h1>صالون باتريك ⭐️</h1>
+        <button class="btn" id="start-btn">ابدأ اللعب!</button>
+    </div>
+
+    <div id="game-screen">
+        <div class="toolbar">
+            <button class="color-btn active" style="background: #ffb3c6;" data-color="rgba(255, 179, 198, 0.4)"></button> <button class="color-btn" style="background: #ff4d6d;" data-color="rgba(255, 77, 109, 0.5)"></button> <button class="color-btn" style="background: #a0c4ff;" data-color="rgba(160, 196, 255, 0.5)"></button> <button class="color-btn" style="background: #fdffb6;" data-color="rgba(253, 255, 182, 0.5)"></button> <button class="color-btn" style="background: #caffbf;" data-color="rgba(202, 255, 191, 0.5)"></button> <button class="color-btn" style="background: #bdb2ff;" data-color="rgba(189, 178, 255, 0.5)"></button> <button id="clear-btn">تنظيف الوجه 🧽</button>
+        </div>
+
+        <div class="canvas-container">
+            <img id="patrick-img" src="image.png" alt="Patrick Star">
+            <canvas id="makeup-canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // --- إدارة الشاشات ---
+        const startBtn = document.getElementById('start-btn');
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+
+        startBtn.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            resizeCanvas(); // ضبط حجم لوحة الرسم بعد ظهورها
+        });
+
+        // --- إعدادات الرسم والمكياج ---
+        const canvas = document.getElementById('makeup-canvas');
+        const ctx = canvas.getContext('2d');
+        const img = document.getElementById('patrick-img');
+        const colorBtns = document.querySelectorAll('.color-btn');
+        const clearBtn = document.getElementById('clear-btn');
+
+        let isDrawing = false;
+        let currentColor = 'rgba(255, 179, 198, 0.4)'; // اللون الافتراضي (وردي)
+        let brushSize = 25; // حجم فرشاة المكياج
+
+        // ضبط حجم الـ Canvas ليتطابق تماماً مع حجم الصورة
+        function resizeCanvas() {
+            canvas.width = img.clientWidth;
+            canvas.height = img.clientHeight;
+        }
+
+        // إعادة ضبط الحجم عند تغيير حجم النافذة أو عند تحميل الصورة
+        window.addEventListener('resize', resizeCanvas);
+        img.addEventListener('load', resizeCanvas);
+
+        // تغيير لون المكياج
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // إزالة التفعيل من كل الأزرار
+                colorBtns.forEach(b => b.classList.remove('active'));
+                // تفعيل الزر المضغوط
+                btn.classList.add('active');
+                // تغيير اللون
+                currentColor = btn.getAttribute('data-color');
+            });
+        });
+
+        // زر تنظيف الوجه
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // --- منطق الرسم (الماوس واللمس) ---
+        function startPosition(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function endPosition() {
+            isDrawing = false;
+            ctx.beginPath(); // لبدء مسار جديد في المرة القادمة
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            e.preventDefault(); // منع التمرير في الشاشة أثناء الرسم باللمس
+
+            // تحديد إحداثيات اللمس أو الماوس
+            const rect = canvas.getBoundingClientRect();
+            let clientX, clientY;
+
+            if (e.type.includes('mouse')) {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            } else {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            // إعدادات الفرشاة لتبدو كالمكياج (نثر ناعم)
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = currentColor;
+            
+            // إضافة تأثير التوهج أو النعومة للمكياج
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = currentColor;
+
+            // الرسم
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // أحداث الماوس للكمبيوتر
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseout', endPosition);
+
+        // أحداث اللمس للأجهزة اللوحية والهواتف
+        canvas.addEventListener('touchstart', startPosition, {passive: false});
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw, {passive: false});
+
+    </script>
+</body>
+</html>
