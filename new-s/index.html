@@ -3,424 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>زر الصوت الأحمر - صوت السحور</title>
+    <title>زر أحمر - تشغيل صوت</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* منع تحديد النص أثناء الضغط المتكرر */
         }
 
         body {
-            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            background: linear-gradient(145deg, #1a2a32 0%, #0f1a1f 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', 'Tahoma', system-ui, 'Cairo', 'Roboto', sans-serif;
-            padding: 1.5rem;
-            margin: 0;
+            font-family: system-ui, 'Segoe UI', sans-serif;
         }
 
-        /* البطاقة الرئيسية */
-        .sound-card {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(2px);
-            border-radius: 4rem;
-            padding: 2.5rem 2rem 3rem 2rem;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 550px;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-
-        /* عنوان توضيحي */
-        .title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #2c3e44;
-            margin-bottom: 0.6rem;
-            letter-spacing: -0.3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .title span {
-            background: #fef5e7;
-            padding: 0.2rem 0.9rem;
-            border-radius: 60px;
-            font-size: 1.2rem;
-            color: #b45116;
-        }
-
-        .sub {
-            color: #5d6e7a;
-            font-size: 1rem;
-            margin-bottom: 2.5rem;
-            border-bottom: 1px dashed #cddae3;
-            display: inline-block;
-            padding-bottom: 6px;
-        }
-
-        /* الزر الأحمر الرئيسي */
+        /* الزر الأحمر الكبير - بدون أي نص */
         .red-button {
             background: #e31b23;
             border: none;
             outline: none;
             cursor: pointer;
-            padding: 1.5rem 2.2rem;
-            width: 85%;
-            max-width: 320px;
-            border-radius: 100px;
-            font-size: 2rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            display: inline-flex;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
             transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            box-shadow: 0 12px 20px -8px rgba(200, 30, 30, 0.5), 0 4px 8px rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.2);
+            background-image: radial-gradient(circle at 30% 25%, rgba(255,255,240,0.2) 2%, transparent 2.5%);
+            background-size: 25px 25px;
         }
 
+        /* تأثير hover و active */
         .red-button:hover {
             background: #c01118;
-            transform: scale(1.02);
-            box-shadow: 0 18px 28px -10px rgba(200, 30, 30, 0.7);
+            transform: scale(1.03);
+            box-shadow: 0 25px 40px -8px rgba(0, 0, 0, 0.6), 0 0 0 3px rgba(255, 255, 255, 0.3);
         }
 
         .red-button:active {
-            transform: scale(0.97);
+            transform: scale(0.96);
             background: #a80f16;
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
             transition: 0.02s linear;
         }
 
-        /* أيقونة الإيقاع والمؤثرات */
-        .button-icon {
-            font-size: 2.2rem;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        /* نبض خفيف عند النقر (تأثير بصري فقط) */
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(227, 27, 35, 0.6), 0 0 0 2px rgba(255,255,200,0.3); }
+            70% { box-shadow: 0 0 0 20px rgba(227, 27, 35, 0), 0 0 0 5px rgba(255,255,200,0); }
+            100% { box-shadow: 0 0 0 0 rgba(227, 27, 35, 0), 0 0 0 2px rgba(255,255,200,0.2); }
         }
 
-        /* منطقة الرسائل والتنبيهات */
-        .message-area {
-            margin-top: 2rem;
-            min-height: 65px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toast-msg {
-            background: #1e2a32e6;
-            backdrop-filter: blur(10px);
-            color: #f0f3f8;
-            padding: 0.5rem 1.2rem;
-            border-radius: 60px;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            max-width: 90%;
-        }
-
-        .toast-msg.error {
-            background: #a12424e0;
-            border-right: 4px solid #ffb347;
-        }
-
-        .toast-msg.success {
-            background: #1f543dd9;
-            border-right: 4px solid #c3e6a5;
-        }
-
-        /* تلميح المسار */
-        .info-hint {
-            margin-top: 2rem;
-            font-size: 0.7rem;
-            color: #7e8c8f;
-            background: #eef2f5;
-            display: inline-block;
-            padding: 0.3rem 1rem;
-            border-radius: 100px;
-            font-family: monospace;
-            direction: ltr;
-        }
-
-        /* تكيف مع الجوال */
-        @media (max-width: 500px) {
-            .sound-card {
-                padding: 1.8rem 1rem 2rem 1rem;
-                border-radius: 2rem;
-            }
-            .red-button {
-                width: 100%;
-                padding: 1.2rem 1rem;
-                font-size: 1.5rem;
-            }
-            .title {
-                font-size: 1.4rem;
-            }
-            .button-icon {
-                font-size: 1.7rem;
-            }
-        }
-
-        /* نبضة خفيفة عند التشغيل (اختياري) */
-        @keyframes gentlePulse {
-            0% { box-shadow: 0 0 0 0 rgba(227, 27, 35, 0.5); }
-            70% { box-shadow: 0 0 0 12px rgba(227, 27, 35, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(227, 27, 35, 0); }
-        }
         .play-pulse {
-            animation: gentlePulse 0.45s ease-out;
+            animation: pulseRing 0.45s ease-out;
+        }
+
+        /* لا نصوص إطلاقاً - حتى الكود لا يضيف أي عناصر نصية مرئية */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
         }
     </style>
 </head>
 <body>
+    <!-- زر أحمر خالص بدون أي نص مكتوب عليه أو بجانبه -->
+    <button class="red-button" id="playSoundBtn" aria-label="تشغيل الصوت"></button>
 
-<div class="sound-card">
-    <div class="title">
-        🕌🔊 
-        <span>زر السحور</span>
-    </div>
-    <div class="sub">انقر لسماع نغمة السحور</div>
+    <!-- عنصر صوتي مخفي لتشغيل الملف -->
+    <audio id="sahoorAudio" preload="auto" style="display: none;" src="sounds/sahoor.mp3"></audio>
 
-    <!-- الزر الأحمر الرئيسي -->
-    <button class="red-button" id="playSoundBtn">
-        <span class="button-icon">🔴</span>
-        <span>شَغِّل الصوت</span>
-        <span class="button-icon">🎵</span>
-    </button>
+    <script>
+        (function() {
+            const audio = document.getElementById('sahoorAudio');
+            const btn = document.getElementById('playSoundBtn');
 
-    <!-- منطقة عرض الحالة أو الأخطاء -->
-    <div class="message-area" id="messageArea">
-        <div class="toast-msg" id="statusMsg">
-            📁 جاهز للتشغيل
-        </div>
-    </div>
+            // وظيفة تشغيل الصوت مع اعادة التعيين الى البداية
+            function playSahoor() {
+                try {
+                    // إعادة الصوت إلى البداية إذا كان يمكن تحديد المدة
+                    if (isFinite(audio.duration) && audio.duration > 0) {
+                        audio.currentTime = 0;
+                    } else {
+                        audio.currentTime = 0;
+                    }
 
-    <!-- تلميح مسار الملف -->
-    <div class="info-hint">
-        📂 المسار: sounds/sahoor.mp3
-    </div>
-</div>
-
-<!-- عنصر الصوت الخفي (مسبق التحميل لتشغيل سلس) -->
-<audio id="sahoorAudio" preload="auto" style="display: none;" src="sounds/sahoor.mp3"></audio>
-
-<script>
-    (function() {
-        // الحصول على العناصر
-        const audio = document.getElementById('sahoorAudio');
-        const playBtn = document.getElementById('playSoundBtn');
-        const msgContainer = document.getElementById('statusMsg');
-        const messageArea = document.getElementById('messageArea');
-
-        // متغير لتخزين مؤقت الرسالة (لتجنب التداخل)
-        let timeoutId = null;
-
-        // دالة لإظهار رسالة للمستخدم (نجاح أو خطأ أو تنبيه)
-        function showMessage(text, type = 'info', duration = 2200) {
-            // إزالة أي مؤقت سابق
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-                timeoutId = null;
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch((error) => {
+                            // عدم عرض أي نصوص للمستخدم، فقط تسجيل الخطأ في وحدة التحكم
+                            console.warn("Audio playback failed:", error);
+                            // محاولة بديلة: إعادة تحميل المصدر وتشغيله (بدون رسائل نصية)
+                            if (error.name === "NotSupportedError" || error.name === "NotFoundError") {
+                                console.warn("File issue: sounds/sahoor.mp3 may be missing or unsupported");
+                                // لا نعرض أي تنبيهات للمستخدم
+                            } else if (error.name === "NotAllowedError") {
+                                // المتصفح يمنع التشغيل التلقائي، لكن الزر ينقر بواسطة المستخدم لذلك هذا نادر
+                                console.warn("Autoplay blocked, but user gesture should handle it");
+                            }
+                        }).then(() => {
+                            // نجاح التشغيل: إضافة تأثير نبض للزر دون نصوص
+                            btn.classList.add('play-pulse');
+                            setTimeout(() => {
+                                btn.classList.remove('play-pulse');
+                            }, 400);
+                        });
+                    } else {
+                        // fallback للمتصفحات القديمة
+                        audio.play();
+                        btn.classList.add('play-pulse');
+                        setTimeout(() => {
+                            btn.classList.remove('play-pulse');
+                        }, 400);
+                    }
+                } catch (err) {
+                    console.error("Unexpected audio error:", err);
+                }
             }
 
-            // تعيين النص والنمط بناءً على النوع
-            msgContainer.innerHTML = '';
-            // إضافة أيقونة بسيطة حسب النوع
-            let icon = '';
-            if (type === 'error') {
-                icon = '⚠️ ';
-                msgContainer.classList.add('error');
-                msgContainer.classList.remove('success');
-            } else if (type === 'success') {
-                icon = '✅ ';
-                msgContainer.classList.add('success');
-                msgContainer.classList.remove('error');
-            } else {
-                icon = '🎧 ';
-                msgContainer.classList.remove('error', 'success');
-            }
-            msgContainer.innerHTML = `${icon} ${text}`;
+            // إضافة حدث النقر على الزر
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                playSahoor();
+            });
 
-            // إعادة تعيين الرسالة بعد المدة المحددة (تبقى رسالة افتراضية)
-            timeoutId = setTimeout(() => {
-                if (msgContainer) {
-                    msgContainer.innerHTML = '🎵 جاهز للتشغيل';
-                    msgContainer.classList.remove('error', 'success');
-                }
-                timeoutId = null;
-            }, duration);
-        }
-
-        // إضافة تأثير نبض قصير للزر عند التشغيل (تحسين بصري)
-        function addPulseEffect() {
-            playBtn.classList.add('play-pulse');
-            setTimeout(() => {
-                playBtn.classList.remove('play-pulse');
-            }, 400);
-        }
-
-        // الوظيفة الأساسية: تشغيل الصوت مع إعادة تعيينه من البداية (إعادة تشغيل فوري)
-        function playSahoorSound() {
-            // فحص ما إذا كان الصوت جاهزاً أو له طول (ولكننا نتعامل مع الحالات الخاطئة)
-            // تعيين currentTime = 0 يعيد الصوت إلى البداية سواء كان يلعب أو متوقفاً
-            try {
-                // محاولة إعادة ضبط الوقت إلى البداية
-                // ملاحظة: في حالة عدم تحميل البيانات بشكل كامل، setting currentTime قد لا يؤثر فوراً ولكن play() سيعمل
-                if (isFinite(audio.duration) && audio.duration > 0) {
-                    audio.currentTime = 0;
-                } else {
-                    // إذا لم يكن duration جاهزاً بعد (ملف لم يحمل meta data) -> نخفّض إلى 0 بأمان
-                    audio.currentTime = 0;
-                }
-
-                // محاولة تشغيل الصوت
-                const playPromise = audio.play();
-
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // نجاح التشغيل
-                        showMessage("🎶 يتم تشغيل صوت السحور الآن 🎶", "success", 1800);
-                        addPulseEffect();
-                    }).catch((error) => {
-                        // فشل التشغيل لأسباب متعددة (سياسة المتصفح، ملف مفقود، تنسيق غير مدعوم)
-                        console.error("Audio play error: ", error);
-                        let errorMsg = "حدث خطأ أثناء تشغيل الصوت";
-                        if (error.name === "NotSupportedError") {
-                            errorMsg = "⚠️ تنسيق الملف غير مدعوم أو المسار خاطئ (sounds/sahoor.mp3)";
-                        } else if (error.name === "NotAllowedError") {
-                            errorMsg = "⛔ متصفحك يمنع التشغيل التلقائي، يرجى النقر مرة أخرى";
-                        } else if (error.name === "NotFoundError") {
-                            errorMsg = "❌ الملف غير موجود: sounds/sahoor.mp3 تأكد من المسار";
-                        } else {
-                            errorMsg = `⚠️ تعذر تشغيل الملف: ${error.message.substring(0, 70)}`;
-                        }
-                        showMessage(errorMsg, "error", 3000);
-                        // إضافة فحص خاص لتوجيه المستخدم بشكل أكثر دقة إذا كان الملف لا يمكن تحميله
-                        if (audio.networkState === audio.NETWORK_NO_SOURCE || audio.error) {
-                            showMessage("❌ فشل تحميل الملف الصوتي، تحقق من مجلد 'sounds' والملف 'sahoor.mp3'", "error", 3500);
-                        }
-                    });
-                } else {
-                    // Fallback للمتصفحات القديمة جداً
-                    audio.play();
-                    showMessage("🎶 تشغيل الصوت", "success", 1500);
-                    addPulseEffect();
-                }
-            } catch (err) {
-                console.error("Exception in play handler: ", err);
-                showMessage("⚠️ خطأ غير متوقع، راجع مسار الملف الصوتي", "error", 2800);
-            }
-        }
-
-        // عند تحميل الصفحة نتأكد من أن العنصر الصوتي له معالج أخطاء للكشف المبكر
-        function setupAudioErrorHandling() {
-            // إذا حدث خطأ في تحميل الملف (مثل 404) نقوم بعرض رسالة مناسبة
+            // تحسين: معالجة أخطاء تحميل الملف بصمت (عدم عرض نصوص للمستخدم)
             audio.addEventListener('error', (e) => {
-                const networkError = audio.networkState;
-                let errorDesc = "";
-                if (audio.error) {
-                    switch (audio.error.code) {
+                const mediaError = audio.error;
+                if (mediaError) {
+                    switch (mediaError.code) {
                         case MediaError.MEDIA_ERR_ABORTED:
-                            errorDesc = "تم إحباط التحميل";
+                            console.warn("Audio loading aborted");
                             break;
                         case MediaError.MEDIA_ERR_NETWORK:
-                            errorDesc = "خطأ في الشبكة أثناء تحميل الصوت";
+                            console.warn("Network error while loading audio");
                             break;
                         case MediaError.MEDIA_ERR_DECODE:
-                            errorDesc = "تعذر فك ترميز الملف، تأكد من صيغة MP3 سليمة";
+                            console.warn("Audio decode error, file may be corrupted");
                             break;
                         case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                            errorDesc = "المسار أو التنسيق غير مدعوم: sounds/sahoor.mp3";
+                            console.warn("File not found or format not supported: sounds/sahoor.mp3");
                             break;
                         default:
-                            errorDesc = "خطأ غير معروف في تحميل الملف";
+                            console.warn("Unknown audio error");
                     }
                 } else {
-                    errorDesc = "لا يمكن تحميل الملف الصوتي، تحقق من وجود الملف في المسار sounds/sahoor.mp3";
-                }
-                // عرض رسالة خطأ واضحة في منطقة الحالة ولكن بشكل غير مزعج
-                showMessage(`🔇 خطأ في الصوت: ${errorDesc}`, "error", 4500);
-                console.warn("Audio element error: ", errorDesc);
-            });
-
-            // في حال نجاح تحميل الملف بالكامل نعرض رسالة هادئة (اختياري)
-            audio.addEventListener('canplaythrough', () => {
-                // فقط نُظهر للمستخدم أن الملف جاهز في الخلفية (غير مزعج)
-                if (msgContainer && !msgContainer.innerHTML.includes('خطأ')) {
-                    // لكن لا نغير الرسالة إذا كانت حالة خطأ قائمة
-                    if (!msgContainer.classList.contains('error')) {
-                        msgContainer.innerHTML = '🎵 الصوت جاهز ✅';
-                        setTimeout(() => {
-                            if (msgContainer && !msgContainer.classList.contains('error')) {
-                                msgContainer.innerHTML = '🎵 جاهز للتشغيل';
-                            }
-                        }, 2000);
-                    }
+                    console.warn("Failed to load audio from sounds/sahoor.mp3");
                 }
             });
-        }
 
-        // من أجل تجربة أفضل: إذا فشل التحميل لأي سبب، نحاول إضافة محاولة بديلة بإعادة تحميل المصدر (اختياري)
-        // لكننا لا نعقد الأمور, فقط نعطي إمكانية إعادة التحميل بسيطة عند النقر؟ ليس ضرورياً.
-        // بدلاً من ذلك، وظيفة زر إعادة المحاولة ضمنية بالنقر. تبقى سهلة.
-
-        // إضافة حدث النقر على الزر الرئيسي
-        playBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            // محاولة تشغيل الصوت مع التحقق وعرض التفاعل
-            playSahoorSound();
-        });
-
-        // عند بدء تحميل الصفحة, نضبط معالجة الأخطاء ونحاول التأكد من إمكانية التحميل (لن يلعب تلقائياً)
-        setupAudioErrorHandling();
-
-        // إضافة لمسة صغيرة: إذا كان المتصفح يدعم واجهة AudioContext متطلبات التفاعل, لكننا نعتمد على نقرة المستخدم.
-        // لمنع أي رسائل غير ضرورية في حالة نجاح تحميل الملف مسبقاً.
-        // التأكد من أن الصوت ليس mute او volume صفر (لا نغيره)
-        if (audio.volume === 0) audio.volume = 1; // التأكد من أن الصوت مسموع
-
-        // عرض تلميح ضمني: في حالة لم يتم العثور على الملف وتم النقر، يظهر الخطأ بوضوح.
-        // نضيف إمكانية إظهار إذا كان الملف محلياً غير موجود برسالة ودودة عند فشل التحميل المسبق.
-        // التحقق من جاهزية الملف: بعد ثانية نتحقق من أنه يمكن التحميل إذا لم يحدث خطأ.
-        setTimeout(() => {
-            if (audio.readyState === 0 && !audio.error) {
-                // الملف لم يبدأ بالتحميل بعد أو الشبكة بطيئة -> لا بأس.
-                // فقط في حالة وجود خطأ صامت نعطي إشارة خفيفة ولكن لا نزعج المستخدم قبل النقر.
-                if (audio.networkState === audio.NETWORK_EMPTY) {
-                    // قد يكون المسار غير موجود.. لكننا نعطي رسالة خفيفة في منطقة الحالة للإشارة.
-                    if (!msgContainer.innerHTML.includes('خطأ')) {
-                        // لا نعطي رسالة خطأ حتى لا يربك المستخدم، ولكن نعرض رسالة هادئة عن التأكد من الملف بعد 2 ثانية
-                        setTimeout(() => {
-                            if (audio.networkState === audio.NETWORK_EMPTY && !audio.error && !msgContainer.innerHTML.includes('خطأ')) {
-                                // رسالة غير تدخلية لكن مفيدة
-                                showMessage("📁 تأكد من وجود ملف sounds/sahoor.mp3", "info", 3000);
-                            }
-                        }, 800);
-                    }
-                }
-            }
-        }, 500);
-    })();
-</script>
+            // ضبط مستوى الصوت إذا لزم الأمر (تأكد من أنه مسموع)
+            if (audio.volume === 0) audio.volume = 1;
+        })();
+    </script>
 </body>
 </html>
